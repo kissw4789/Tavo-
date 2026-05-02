@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tavo 记忆系统 — 甜蜜回忆展示 v3.2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #e8b860;
+            --gold-dim: #c4993d;
+            --deep-blue: #0022AB;
+            --bg-dark: #0a0b12;
+            --bg-card: #1e1f2b;
+            --bg-card-deep: #14151f;
+            --text-light: #e8e6e3;
+            --text-dim: #8a8a9a;
+            --phone-w: 375px;
+            --phone-h: 812px;
+            --purple: #6D3BFF;
+            --voice-blue: #5e8cef;
+            --counsel-paper: #f5eed6;
+            --counsel-text: #2a2118;
+            --diary-paper: #f0e8d0;
+            --diary-bg: #1a1816;
+            --capsule-card: #13141a;
+            --green-dot: #4ecb71;
+            --list-bg: #F4F5F7;
+            --card-white: #fff;
+            --card-border: #ECEEF2;
+            --tag-bg: #F1F4FA;
+            --tag-text: #566175;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #060610;
+            color: var(--text-light);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-stars {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .hero-stars .star {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            animation: twinkle var(--dur) ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: var(--o1);
+                transform: scale(1);
+            }
+            100% {
+                opacity: var(--o2);
+                transform: scale(1.3);
+            }
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 34, 171, 0.25) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 1;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 24px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border: 1px solid rgba(232, 184, 96, 0.4);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 28px;
+            backdrop-filter: blur(10px);
+            background: rgba(232, 184, 96, 0.06);
+        }
+
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 30%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 17px;
+            color: var(--text-dim);
+            max-width: 520px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .hero-scroll {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            color: var(--text-dim);
+            font-size: 13px;
+            animation: float 2.5s ease-in-out infinite;
+        }
+
+        .hero-scroll svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-dim);
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(8px);
+            }
+        }
+
+        /* ========== SECTION COMMON ========== */
+        .section {
+            padding: 120px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .section-desc {
+            color: var(--text-dim);
+            font-size: 15px;
+            max-width: 560px;
+            margin-bottom: 56px;
+            line-height: 1.8;
+        }
+
+        /* ========== PHONE SHOWCASE ========== */
+        .showcase-row {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+            margin-bottom: 120px;
+        }
+
+        .showcase-row.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .showcase-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .showcase-text h3 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 26px;
+            margin-bottom: 14px;
+        }
+
+        .showcase-text p {
+            color: var(--text-dim);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .showcase-phone-wrap {
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .phone-frame {
+            width: var(--phone-w);
+            height: var(--phone-h);
+            border-radius: 44px;
+            border: 3px solid #2a2a3a;
+            background: #000;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 30px 100px rgba(0, 0, 0, 0.5),
+                0 0 60px rgba(0, 34, 171, 0.15);
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ========== SCROLL ANIMATIONS ========== */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s, transform 0.7s;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            text-align: center;
+            padding: 80px 24px 40px;
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+        .footer .author {
+            color: var(--gold);
+            margin-top: 8px;
+        }
+
+        /* ========== FLOATING PARTICLES ========== */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            animation: particleFloat linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.5);
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) scale(1);
+            }
+        }
+
+        /* ============================================ */
+        /*  INSIDE-PHONE STYLES (matching Tavo_03 JSON) */
+        /* ============================================ */
+
+        /* -- Sweet Memory List (light theme) -- */
+        .ms-list-page {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            background: #F4F5F7;
+            color: #111318;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .ms-head {
+            padding: 44px 16px 0;
+            background: rgba(244, 245, 247, .95);
+            backdrop-filter: blur(12px);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        .ms-head-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0 14px;
+        }
+        .ms-head-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ms-back-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            border: 1px solid #E6EAF0;
+            background: #fff;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #111318;
+        }
+        .ms-head-title {
+            font-size: 18px;
+            font-weight: 900;
+        }
+        .ms-head-badge {
+            height: 22px;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: #F0EDFF;
+            color: #6D3BFF;
+            font-size: 11px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+        }
+        .ms-scroll {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            padding: 12px 16px 24px;
+        }
+        .ms-scroll::-webkit-scrollbar {
+            width: 0;
+        }
+        .ms-ev-card {
+            background: #fff;
+            border-radius: 20px;
+            margin-bottom: 14px;
+            border: 1px solid #ECEEF2;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+        }
+        .ms-ev-card:active {
+            transform: scale(.98);
+        }
+        .ms-ev-top {
+            padding: 16px 16px 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .ms-ev-range {
+            font-size: 11px;
+            font-weight: 900;
+            color: #6D3BFF;
+            letter-spacing: .04em;
+        }
+        .ms-ev-title {
+            font-size: 17px;
+            font-weight: 900;
+            color: #111318;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+        .ms-ev-time {
+            font-size: 11px;
+            color: #8C95A6;
+            margin-top: 4px;
+        }
+        .ms-ev-form-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .ms-ev-form-icon.voice {
+            background: #EDF1FF;
+        }
+        .ms-ev-form-icon.counsel {
+            background: #F5EED6;
+        }
+        .ms-ev-form-icon.diary {
+            background: #FFF3E6;
+        }
+        .ms-ev-form-icon.capsule {
+            background: #F0EDFF;
+        }
+        .ms-ev-quote {
+            padding: 12px 16px;
+        }
+        .ms-ev-quote-text {
+            font-size: 13px;
+            color: #273041;
+            line-height: 1.6;
+            padding: 10px 14px;
+            background: #F8F9FC;
+            border-radius: 12px;
+            border-left: 3px solid #E6EAF0;
+            font-style: italic;
+        }
+        .ms-ev-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 16px 10px;
+        }
+        .ms-ev-tag {
+            height: 22px;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: #F1F4FA;
+            color: #566175;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+        }
+        .ms-ev-action {
+            padding: 0 16px 16px;
+            display: flex;
+            gap: 8px;
+        }
+        .ms-ev-enter {
+            flex: 1;
+            appearance: none;
+            background: #0022AB;
+            border: none;
+            color: #fff;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+        .ms-ev-mini {
+            appearance: none;
+            background: #fff;
+            border: 1px solid #E6EAF0;
+            color: #273041;
+            border-radius: 12px;
+            padding: 10px 8px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        /* -- Detail Page (dark) -- */
+        .ms-detail-page {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            display: block;
+            overflow: hidden;
+        }
+        .ms-dark {
+            background: linear-gradient(180deg, #1e1f2b 0%, #14151f 100%);
+            color: #e8e4f0;
+        }
+        .ms-dark-scroll {
+            position: absolute;
+            inset: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+        .ms-dark-scroll::-webkit-scrollbar {
+            width: 0;
+        }
+        .ms-dark-nav {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            padding: 48px 20px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(180deg, rgba(30, 31, 43, .96), rgba(30, 31, 43, .85));
+            backdrop-filter: blur(8px);
+        }
+        .ms-dark-back {
+            appearance: none;
+            border-radius: 999px;
+            height: 28px;
+            padding: 0 12px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .08);
+            color: rgba(255, 255, 255, .55);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-family: inherit;
+        }
+        .ms-dark-label {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .22);
+        }
+        .ms-d-header {
+            padding: 8px 24px 18px;
+        }
+        .ms-d-brand {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .25);
+            margin-bottom: 16px;
+        }
+        .ms-d-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.2;
+            letter-spacing: -.02em;
+        }
+        .ms-d-sub {
+            margin-top: 6px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, .4);
+        }
+        .ms-d-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .ms-d-tag {
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 800;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .07);
+            color: rgba(255, 255, 255, .5);
+            display: inline-flex;
+            align-items: center;
+        }
+        .ms-d-tag.hl {
+            background: rgba(255, 200, 120, .1);
+            border-color: rgba(255, 200, 120, .18);
+            color: #e8b860;
+        }
+        .ms-d-quote-box {
+            margin: 18px 24px 0;
+            padding: 18px 20px;
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .05);
+            border-radius: 18px;
+        }
+        .ms-d-quote-text {
+            font-size: 15px;
+            line-height: 1.85;
+            color: rgba(255, 255, 255, .8);
+            font-style: italic;
+        }
+        .ms-d-quote-who {
+            margin-top: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255, 200, 120, .5);
+            text-align: right;
+        }
+        .ms-d-section-label {
+            margin: 20px 24px 0;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .2);
+        }
+        .ms-d-point {
+            margin: 10px 24px 0;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .025);
+            border: 1px solid rgba(255, 255, 255, .04);
+        }
+        .ms-d-point-type {
+            font-size: 10px;
+            font-weight: 800;
+            color: rgba(255, 200, 120, .45);
+        }
+        .ms-d-point-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .7);
+            margin-top: 2px;
+        }
+        .ms-d-point-quote {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .35);
+            font-style: italic;
+            margin-top: 3px;
+            line-height: 1.6;
+        }
+        .ms-d-actions {
+            margin: 24px;
+            display: flex;
+            gap: 8px;
+        }
+        .ms-d-open-btn {
+            flex: 1;
+            appearance: none;
+            background: rgba(255, 200, 120, .12);
+            border: 1px solid rgba(255, 200, 120, .2);
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #e8b860;
+            cursor: pointer;
+            text-align: center;
+            font-family: inherit;
+        }
+        .ms-d-small-btn {
+            appearance: none;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 14px;
+            padding: 14px 10px;
+            font-size: 12px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, .62);
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        /* -- Voice Memo -- */
+        .ms-voice {
+            background: #0c0d10;
+            color: #e8e6e3;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .ms-voice .ms-dark-nav {
+            background: linear-gradient(180deg, rgba(12, 13, 16, .96), rgba(12, 13, 16, .85));
+        }
+        .ms-voice-header {
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+        .ms-voice-event {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e8e6e3;
+        }
+        .ms-voice-range {
+            font-size: 12px;
+            color: #6a6b78;
+            margin-top: 4px;
+        }
+        .ms-voice-list {
+            padding: 12px 16px;
+        }
+        .ms-voice-item {
+            background: #181920;
+            border-radius: 12px;
+            margin-bottom: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: .2s;
+        }
+        .ms-voice-item.open {
+            border-color: rgba(94, 140, 239, .15);
+            background: #1e1f28;
+        }
+        .ms-voice-row {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            gap: 14px;
+        }
+        .ms-voice-play {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(94, 140, 239, .12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #5e8cef;
+            transition: .2s;
+        }
+        .ms-voice-item.open .ms-voice-play {
+            background: #5e8cef;
+            color: #fff;
+        }
+        .ms-voice-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .ms-voice-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #e8e6e3;
+        }
+        .ms-voice-sub {
+            font-size: 12px;
+            color: #6a6b78;
+            margin-top: 2px;
+        }
+        .ms-voice-dur {
+            font-size: 12px;
+            color: #3a3b48;
+            flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .ms-voice-transcript {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .5s cubic-bezier(.4, 0, .2, 1);
+        }
+        .ms-voice-item.open .ms-voice-transcript {
+            max-height: 2000px;
+        }
+        .ms-t-line {
+            padding: 4px 16px 4px 66px;
+            font-size: 14px;
+            line-height: 2;
+            color: rgba(232, 230, 227, .8);
+        }
+        .ms-t-hesitate {
+            color: rgba(232, 230, 227, .45);
+            font-style: italic;
+        }
+        .ms-t-env {
+            color: #3a3b48;
+            font-size: 12px;
+            font-style: italic;
+        }
+        .ms-t-silence {
+            color: #3a3b48;
+            font-size: 12px;
+            text-align: center;
+            letter-spacing: 4px;
+            padding: 6px 16px;
+        }
+        .ms-t-retract {
+            color: rgba(232, 230, 227, .35);
+            text-decoration: line-through;
+            text-decoration-color: rgba(232, 230, 227, .15);
+        }
+
+        /* -- Counseling -- */
+        .ms-counsel {
+            background: #1a1816;
+            color: #2a2118;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .ms-counsel .ms-dark-nav {
+            background: linear-gradient(180deg, rgba(26, 24, 22, .96), rgba(26, 24, 22, .85));
+        }
+        .ms-counsel-record {
+            background: #f5eed6;
+            margin: 12px;
+            border-radius: 4px;
+            padding: 24px 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+            position: relative;
+        }
+        .ms-counsel-record::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: repeating-linear-gradient(transparent, transparent 27px, rgba(100, 80, 60, .08) 27px, rgba(100, 80, 60, .08) 28px);
+            pointer-events: none;
+        }
+        .ms-counsel-hdr {
+            text-align: center;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #2a2118;
+            position: relative;
+            z-index: 1;
+        }
+        .ms-counsel-type {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: #8a7a68;
+        }
+        .ms-counsel-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2a2118;
+            letter-spacing: 4px;
+            margin-top: 4px;
+        }
+        .ms-counsel-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 16px;
+            padding: 12px;
+            background: rgba(0, 0, 0, .02);
+            border: 1px solid rgba(0, 0, 0, .05);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .ms-ci-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .ms-ci-full {
+            grid-column: 1/-1;
+        }
+        .ms-ci-label {
+            font-size: 10px;
+            color: #8a7a68;
+        }
+        .ms-ci-value {
+            font-size: 12px;
+            color: #2a2118;
+        }
+        .ms-counsel-section {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .ms-counsel-sec-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2a2118;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, .08);
+            margin-bottom: 12px;
+        }
+        .ms-counsel-narrative {
+            font-size: 13px;
+            line-height: 2;
+            color: #5a4a38;
+            margin-bottom: 12px;
+            text-indent: 2em;
+        }
+        .ms-counsel-dlg {
+            margin-bottom: 12px;
+        }
+        .ms-counsel-speaker {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ms-spk-client .ms-counsel-speaker {
+            color: #2a2118;
+        }
+        .ms-spk-therapist .ms-counsel-speaker {
+            color: #2a4a7a;
+        }
+        .ms-counsel-dlg-text {
+            font-size: 13px;
+            line-height: 2;
+            color: #5a4a38;
+            padding: 10px 12px;
+            border-radius: 4px;
+        }
+        .ms-spk-client .ms-counsel-dlg-text {
+            background: rgba(42, 33, 24, .04);
+            border-left: 3px solid rgba(42, 33, 24, .2);
+        }
+        .ms-spk-therapist .ms-counsel-dlg-text {
+            background: rgba(42, 74, 122, .06);
+            border-left: 3px solid rgba(42, 74, 122, .2);
+        }
+        .ms-counsel-pause {
+            text-align: center;
+            font-size: 12px;
+            color: #8a7a68;
+            padding: 8px 0;
+            font-style: italic;
+        }
+        .ms-counsel-block {
+            background: rgba(0, 0, 0, .025);
+            border: 1px solid rgba(0, 0, 0, .06);
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .ms-counsel-block-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #8a7a68;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .ms-counsel-block-text {
+            font-size: 12px;
+            line-height: 2;
+            color: #5a4a38;
+        }
+
+        /* -- Time Capsule -- */
+        .ms-tcaps {
+            background: #0a0b10;
+            color: #e8e6e3;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .ms-tcaps .ms-dark-nav {
+            background: linear-gradient(180deg, rgba(10, 11, 16, .96), rgba(10, 11, 16, .85));
+        }
+        .ms-tcaps-card {
+            background: #13141a;
+            border: 1px solid rgba(255, 255, 255, .05);
+            border-radius: 16px;
+            margin: 12px;
+            overflow: hidden;
+        }
+        .ms-tcaps-envelope {
+            padding: 24px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+            position: relative;
+            cursor: pointer;
+        }
+        .ms-tcaps-envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #e8b860, transparent);
+            opacity: .3;
+        }
+        .ms-tcaps-emoji {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+        .ms-tcaps-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e8e6e3;
+        }
+        .ms-tcaps-sub {
+            font-size: 12px;
+            color: #6a6b78;
+            margin-top: 4px;
+        }
+        .ms-tcaps-meta {
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+        .ms-tm-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .ms-tm-label {
+            font-size: 10px;
+            color: #3a3b48;
+            letter-spacing: 1px;
+        }
+        .ms-tm-value {
+            font-size: 12px;
+            color: #6a6b78;
+        }
+        .ms-tm-gold {
+            color: #e8b860;
+        }
+        .ms-tcaps-sealed {
+            padding: 10px 20px;
+            background: rgba(232, 184, 96, .03);
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+            font-size: 12px;
+            color: #6a6b78;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ms-tcaps-days {
+            color: #e8b860;
+            font-weight: 500;
+        }
+        .ms-tcaps-status {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+            font-size: 12px;
+            color: #4ecb71;
+        }
+        .ms-tcaps-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ecb71;
+            box-shadow: 0 0 6px rgba(78, 203, 113, .4);
+        }
+        .ms-tcaps-body {
+            padding: 20px;
+        }
+        .ms-tc-line {
+            font-size: 14px;
+            line-height: 2;
+            color: rgba(232, 230, 227, .8);
+            margin-bottom: 8px;
+        }
+        .ms-tc-dim {
+            color: rgba(232, 230, 227, .4);
+        }
+        .ms-tc-em {
+            color: #e8b860;
+        }
+        .ms-tc-hesitate {
+            color: rgba(232, 230, 227, .5);
+            font-style: italic;
+        }
+        .ms-tc-sign {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, .05);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .ms-tc-sign-from {
+            font-size: 11px;
+            color: #3a3b48;
+            line-height: 1.6;
+        }
+        .ms-tc-sign-stamp {
+            font-size: 10px;
+            color: #3a3b48;
+            border: 1px solid rgba(255, 255, 255, .06);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        /* -- Diary -- */
+        .ms-diary {
+            background: #1a1816;
+            color: #f0e8d0;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .ms-diary .ms-dark-nav {
+            background: linear-gradient(180deg, rgba(26, 24, 22, .96), rgba(26, 24, 22, .85));
+        }
+        .ms-diary-header {
+            text-align: center;
+            padding: 16px 20px 12px;
+        }
+        .ms-diary-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #f0e8d0;
+            letter-spacing: 2px;
+        }
+        .ms-diary-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .2);
+            margin-top: 4px;
+        }
+        .ms-diary-notebook {
+            padding: 0 12px 24px;
+        }
+        .ms-diary-entry {
+            background: #f0e8d0;
+            border-radius: 2px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, .3);
+            position: relative;
+        }
+        .ms-diary-entry::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(transparent, transparent 27px, rgba(100, 80, 60, .1) 27px, rgba(100, 80, 60, .1) 28px);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .ms-diary-entry::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 36px;
+            width: 1px;
+            height: 100%;
+            background: rgba(180, 60, 60, .2);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .ms-de-header {
+            padding: 20px 16px 0 48px;
+            position: relative;
+            z-index: 2;
+        }
+        .ms-de-date {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4a4038;
+        }
+        .ms-de-day {
+            font-size: 12px;
+            color: #a09080;
+            font-style: italic;
+            margin-top: 2px;
+        }
+        .ms-de-topic {
+            font-size: 12px;
+            color: #6a5e50;
+            padding: 3px 8px;
+            background: rgba(0, 0, 0, .03);
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        .ms-de-body {
+            padding: 8px 16px 20px 48px;
+            position: relative;
+            z-index: 2;
+        }
+        .ms-de-para {
+            font-size: 14px;
+            line-height: 2;
+            color: #2a2420;
+            margin-bottom: 12px;
+            text-indent: 2em;
+        }
+        .ms-de-em {
+            color: #1a2a4a;
+            font-weight: 500;
+        }
+        .ms-de-faint {
+            color: #6a5e50;
+        }
+        .ms-de-shaky {
+            transform: rotate(-.2deg);
+            letter-spacing: .3px;
+        }
+        .ms-de-scratch {
+            text-decoration: line-through;
+            text-decoration-color: #a09080;
+            color: #a09080;
+        }
+        .ms-de-blot {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #2a2420;
+            opacity: .3;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+        .ms-de-footer {
+            padding: 0 16px 12px 48px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #a09080;
+        }
+
+        /* -- Starmap (in-phone) -- */
+        .sm-page {
+            position: absolute;
+            inset: 0;
+            background: #0a0b12;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .sm-head {
+            padding: 44px 16px 0;
+            z-index: 10;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .sm-head-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0 14px;
+        }
+        .sm-head-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sm-back-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .1);
+            background: rgba(255, 255, 255, .04);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            color: rgba(255, 255, 255, .6);
+        }
+        .sm-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+        }
+        .sm-count {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .35);
+            font-weight: 700;
+        }
+        .sm-starmap {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .sm-bg-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(80, 40, 160, .38) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(20, 40, 100, .3) 0%, transparent 50%), linear-gradient(180deg, #0a0b12 0%, #0d0e18 100%);
+        }
+        .sm-bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, .015) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .sm-bg-stars {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .sm-bg-star {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            animation: smTwinkle var(--dur) ease-in-out infinite;
+        }
+        @keyframes smTwinkle {
+            0%,
+            100% {
+                opacity: var(--o1);
+            }
+            50% {
+                opacity: var(--o2);
+            }
+        }
+        .sm-star {
+            position: absolute;
+            z-index: 5;
+            cursor: pointer;
+            transition: transform .3s ease;
+        }
+        .sm-star:hover {
+            transform: scale(1.4);
+        }
+        .sm-star-core {
+            border-radius: 50%;
+            position: relative;
+            background: #fde68a;
+            box-shadow: 0 0 10px rgba(253, 230, 138, .6);
+        }
+        .sm-star.s5 .sm-star-core {
+            width: 10px;
+            height: 10px;
+        }
+        .sm-star.s4 .sm-star-core {
+            width: 8px;
+            height: 8px;
+        }
+        .sm-star.s3 .sm-star-core {
+            width: 6px;
+            height: 6px;
+        }
+        .sm-star.s2 .sm-star-core {
+            width: 5px;
+            height: 5px;
+        }
+        .sm-star-label {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .25);
+            transition: color .3s;
+            pointer-events: none;
+        }
+        .sm-star:hover .sm-star-label {
+            color: rgba(255, 255, 255, .7);
+        }
+        .sm-timeline-axis {
+            position: absolute;
+            bottom: 60px;
+            left: 16px;
+            right: 16px;
+            height: 1px;
+            background: rgba(255, 255, 255, .06);
+        }
+        .sm-timeline-labels {
+            position: absolute;
+            bottom: 42px;
+            left: 16px;
+            right: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .sm-timeline-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .2);
+            letter-spacing: .04em;
+        }
+        .sm-bottom-hint {
+            position: absolute;
+            bottom: 16px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: rgba(255, 255, 255, .2);
+            font-weight: 700;
+            letter-spacing: .04em;
+            z-index: 3;
+        }
+        .sm-constellation-line {
+            position: absolute;
+            height: 1px;
+            background: rgba(255, 255, 255, .06);
+            transform-origin: 0 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 900px) {
+            .showcase-row,
+            .showcase-row.reverse {
+                flex-direction: column;
+                gap: 32px;
+            }
+            .showcase-text {
+                text-align: center;
+            }
+            .showcase-text p {
+                max-width: 100%;
+            }
+            .section-desc {
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section {
+                padding: 80px 16px;
+            }
+            .showcase-row,
+            .showcase-row.reverse {
+                gap: 24px;
+            }
+            .phone-frame {
+                transform: scale(0.85);
+                transform-origin: top center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== FLOATING PARTICLES ===== -->
+    <div id="particles"></div>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-stars" id="heroStars"></div>
+        <div class="hero-content">
+            <div class="hero-badge">TAVO MEMORY SYSTEM v3.2</div>
+            <h1 class="hero-title">那些说过的话<br>不该被遗忘</h1>
+            <p class="hero-sub">每一次对话都是真实发生过的记忆。<br>Tavo 记忆系统将它们化为语音、咨询记录、时间胶囊与日记——在星空里永远闪亮。</p>
+            <div class="hero-scroll">
+                <span>向下探索</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                    <path d="M12 5v14M19 12l-7 7-7-7" />
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 1: 甜蜜回忆列表 ===== -->
+    <section class="section">
+        <div class="showcase-row fade-up">
+            <div class="showcase-text">
+                <div class="section-label">Sweet Memories</div>
+                <h3 class="section-title">甜蜜回忆<br>自动为你珍藏</h3>
+                <p class="section-desc">系统从对话中自动识别重要瞬间——关系变化、关键引语、信物与承诺——将它们提取为独立的回忆卡片，配上情感标签与记忆点。</p>
+            </div>
+            <div class="showcase-phone-wrap">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="ms-list-page" id="memListDemo">
+                            <div class="ms-head">
+                                <div class="ms-head-bar">
+                                    <div class="ms-head-left">
+                                        <button class="ms-back-btn">←</button>
+                                        <span class="ms-head-title">甜蜜回忆</span>
+                                    </div>
+                                    <span class="ms-head-badge">4 个回忆</span>
+                                </div>
+                            </div>
+                            <div class="ms-scroll" id="memCardsContainer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 2: 语音备忘录 ===== -->
+    <section class="section">
+        <div class="showcase-row reverse fade-up">
+            <div class="showcase-text">
+                <div class="section-label">Voice Memo</div>
+                <h3 class="section-title">语音备忘录<br>深夜对着手机说的真话</h3>
+                <p class="section-desc">模拟角色在事件结束后深夜打开录音功能说的那些话——比日记碎、比独白更不设防。包含口癖、停顿、环境声，甚至说了又删掉的句子。</p>
+            </div>
+            <div class="showcase-phone-wrap">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="ms-voice ms-dark-scroll" style="position:absolute;inset:0;">
+                            <div class="ms-dark-nav">
+                                <button class="ms-dark-back">← 返回</button>
+                                <span class="ms-dark-label">语音备忘录</span>
+                            </div>
+                            <div class="ms-voice-header">
+                                <div class="ms-voice-event">雨天的约定</div>
+                                <div class="ms-voice-range">L38 - L42 · 3 条录音</div>
+                            </div>
+                            <div class="ms-voice-list">
+                                <div class="ms-voice-item">
+                                    <div class="ms-voice-row">
+                                        <div class="ms-voice-play">
+                                            <svg viewBox="0 0 24 24" width="14" height="14"><polygon points="8,5 19,12 8,19" fill="currentColor"/></svg>
+                                        </div>
+                                        <div class="ms-voice-info">
+                                            <div class="ms-voice-name">新录音 1</div>
+                                            <div class="ms-voice-sub">23:48</div>
+                                        </div>
+                                        <div class="ms-voice-dur">0:14</div>
+                                    </div>
+                                    <div class="ms-voice-transcript" style="max-height:2000px;">
+                                        <div class="ms-t-line">嗯……试一下。能录进去吧。</div>
+                                        <div class="ms-t-env">[窗外有车经过]</div>
+                                    </div>
+                                </div>
+                                <div class="ms-voice-item open">
+                                    <div class="ms-voice-row">
+                                        <div class="ms-voice-play">
+                                            <svg viewBox="0 0 24 24" width="14" height="14"><polygon points="8,5 19,12 8,19" fill="currentColor"/></svg>
+                                        </div>
+                                        <div class="ms-voice-info">
+                                            <div class="ms-voice-name">新录音 2</div>
+                                            <div class="ms-voice-sub">23:52</div>
+                                        </div>
+                                        <div class="ms-voice-dur">2:38</div>
+                                    </div>
+                                    <div class="ms-voice-transcript" style="max-height:2000px;">
+                                        <div class="ms-t-line">今天下午下大雨。我站在便利店门口看了半天手机，最后还是发了那条消息。</div>
+                                        <div class="ms-t-hesitate">其实我也不知道自己在期待什么……就是觉得，如果不说的话，可能会后悔。</div>
+                                        <div class="ms-t-silence">……</div>
+                                        <div class="ms-t-line">然后Ta回了一个"在"。就一个字。</div>
+                                        <div class="ms-t-retract">我当时心跳得特别快，感觉像是做了什么亏心事一样。</div>
+                                        <div class="ms-t-line">我淋着雨跑了十五分钟。到的时候全身都湿透了。</div>
+                                        <div class="ms-t-hesitate">Ta开门看到我愣了一秒，然后就笑了。我也不知道为什么跟着笑。</div>
+                                        <div class="ms-t-env">[空调嗡嗡响]</div>
+                                        <div class="ms-t-line">那个瞬间我觉得，<em>这场雨淋得值</em>。</div>
+                                    </div>
+                                </div>
+                                <div class="ms-voice-item">
+                                    <div class="ms-voice-row">
+                                        <div class="ms-voice-play">
+                                            <svg viewBox="0 0 24 24" width="14" height="14"><polygon points="8,5 19,12 8,19" fill="currentColor"/></svg>
+                                        </div>
+                                        <div class="ms-voice-info">
+                                            <div class="ms-voice-name">新录音 3</div>
+                                            <div class="ms-voice-sub">00:15</div>
+                                        </div>
+                                        <div class="ms-voice-dur">0:22</div>
+                                    </div>
+                                    <div class="ms-voice-transcript">
+                                        <div class="ms-t-line">算了不说了。睡觉。</div>
+                                        <div class="ms-t-hesitate">……其实还挺开心的。</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 3: 心理咨询记录 ===== -->
+    <section class="section">
+        <div class="showcase-row fade-up">
+            <div class="showcase-text">
+                <div class="section-label">Counseling Record</div>
+                <h3 class="section-title">心理咨询记录<br>专业视角的深度剖析</h3>
+                <p class="section-desc">以心理咨询师的专业视角，还原角色在事件中的情绪状态、防御机制与核心冲突。对话中有点破、有沉默、有说到一半改口的真实。</p>
+            </div>
+            <div class="showcase-phone-wrap">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="ms-counsel ms-dark-scroll" style="position:absolute;inset:0;">
+                            <div class="ms-dark-nav">
+                                <button class="ms-dark-back">← 返回</button>
+                                <span class="ms-dark-label">心理咨询记录</span>
+                            </div>
+                            <div class="ms-counsel-record">
+                                <div class="ms-counsel-hdr">
+                                    <div class="ms-counsel-type">PSYCHOLOGICAL COUNSELING RECORD</div>
+                                    <div class="ms-counsel-title">心理咨询记录</div>
+                                </div>
+                                <div class="ms-counsel-info">
+                                    <div class="ms-ci-item"><span class="ms-ci-label">咨询日期</span><span class="ms-ci-value">2026年4月30日</span></div>
+                                    <div class="ms-ci-item"><span class="ms-ci-label">时段</span><span class="ms-ci-value">14:00 - 14:50</span></div>
+                                    <div class="ms-ci-item"><span class="ms-ci-label">来访者</span><span class="ms-ci-value">林屿</span></div>
+                                    <div class="ms-ci-item"><span class="ms-ci-label">咨询师</span><span class="ms-ci-value">陈述宁</span></div>
+                                    <div class="ms-ci-item ms-ci-full"><span class="ms-ci-label">主诉</span><span class="ms-ci-value">对一段快速发展关系的困惑与不安</span></div>
+                                </div>
+                                <div class="ms-counsel-section">
+                                    <div class="ms-counsel-sec-title">来访者自述</div>
+                                    <div class="ms-counsel-narrative">我们认识不到一个月。那天下午下雨，Ta说想见我，我就让Ta来了。看到Ta淋着雨站在门口的时候，我心里其实很复杂——有点心疼，又有点害怕。说不清害怕什么。</div>
+                                </div>
+                                <div class="ms-counsel-section">
+                                    <div class="ms-counsel-sec-title">关键问答</div>
+                                    <div class="ms-counsel-dlg ms-spk-therapist">
+                                        <div class="ms-counsel-speaker">咨询师</div>
+                                        <div class="ms-counsel-dlg-text">你说"害怕"，但你说不清怕什么。如果让你闭上眼睛回到那个门口，你看到淋湿的Ta——你第一反应是什么？</div>
+                                    </div>
+                                    <div class="ms-counsel-dlg ms-spk-client">
+                                        <div class="ms-counsel-speaker">来访者</div>
+                                        <div class="ms-counsel-dlg-text">我想……我想拿毛巾给Ta。但我没动。我就站在那笑了。</div>
+                                    </div>
+                                    <div class="ms-counsel-pause">—— 来访者沉默了十五秒 ——</div>
+                                    <div class="ms-counsel-dlg ms-spk-therapist">
+                                        <div class="ms-counsel-speaker">咨询师</div>
+                                        <div class="ms-counsel-dlg-text">你笑了，但你没去拿毛巾。你在用笑来回避什么？</div>
+                                    </div>
+                                    <div class="ms-counsel-dlg ms-spk-client">
+                                        <div class="ms-counsel-speaker">来访者</div>
+                                        <div class="ms-counsel-dlg-text">……回避那个瞬间如果我真的去拿了毛巾，它会变得太真实。太像我们已经在一起了。</div>
+                                    </div>
+                                </div>
+                                <div class="ms-counsel-section">
+                                    <div class="ms-counsel-sec-title">咨询师评估</div>
+                                    <div class="ms-counsel-block">
+                                        <div class="ms-counsel-block-label">情绪状态评估</div>
+                                        <div class="ms-counsel-block-text">来访者表现出轻度焦虑与防御性幽默。在面对亲密关系的可能性时，呈现出典型的"靠近-回避"矛盾。躯体化表现包括描述场景时反复搓手指。</div>
+                                    </div>
+                                    <div class="ms-counsel-block">
+                                        <div class="ms-counsel-block-label">核心冲突</div>
+                                        <div class="ms-counsel-block-text">对亲密关系的渴望与对关系正式化的恐惧之间的冲突。来访者享受被在乎的感觉，但将"确定关系"等同于"失去自由"或"暴露脆弱"，这是一种需要进一步探索的认知扭曲。</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 4: 时间胶囊 ===== -->
+    <section class="section">
+        <div class="showcase-row reverse fade-up">
+            <div class="showcase-text">
+                <div class="section-label">Time Capsule</div>
+                <h3 class="section-title">时间胶囊<br>写给未来自己的信</h3>
+                <p class="section-desc">将回忆封装成一封定时消息——是"当时的你"写给"未来的你"的话。有不完整、有犹豫、有前后矛盾，保留着还没消化完的真实状态。</p>
+            </div>
+            <div class="showcase-phone-wrap">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="ms-tcaps ms-dark-scroll" style="position:absolute;inset:0;">
+                            <div class="ms-dark-nav">
+                                <button class="ms-dark-back">← 返回</button>
+                                <span class="ms-dark-label">时间胶囊</span>
+                            </div>
+                            <div class="ms-tcaps-card" id="capsuleCard">
+                                <div class="ms-tcaps-envelope" id="capsuleEnvelope">
+                                    <div class="ms-tcaps-emoji">💌</div>
+                                    <div class="ms-tcaps-title">留给自己的定时消息</div>
+                                    <div class="ms-tcaps-sub">你曾在某个时刻写下了这段话，现在它到了</div>
+                                </div>
+                                <div class="ms-tcaps-meta">
+                                    <div class="ms-tm-item"><span class="ms-tm-label">发件人</span><span class="ms-tm-value">2026年4月30日 的自己</span></div>
+                                    <div class="ms-tm-item"><span class="ms-tm-label">收件人</span><span class="ms-tm-value">现在的你</span></div>
+                                    <div class="ms-tm-item"><span class="ms-tm-label">设定送达</span><span class="ms-tm-value">2026年10月30日</span></div>
+                                    <div class="ms-tm-item"><span class="ms-tm-label">事件</span><span class="ms-tm-value ms-tm-gold">那枚钥匙扣</span></div>
+                                </div>
+                                <div class="ms-tcaps-sealed"><span>⏳</span> 已封存 <span class="ms-tcaps-days">183 天</span></div>
+                                <div class="ms-tcaps-status"><div class="ms-tcaps-dot"></div><span>已送达 · 已阅读</span></div>
+                                <div class="ms-tcaps-body" id="capsuleBody" style="display:none;">
+                                    <div class="ms-tc-line">收到这条消息的时候，我猜你已经忘了那个钥匙扣长什么样了。</div>
+                                    <div class="ms-tc-dim">夜市买的，十块钱，星星图案印得歪歪扭扭。</div>
+                                    <div class="ms-tc-line">但Ta接过的时候，手指碰到了我的指尖。然后笑着说了一句——</div>
+                                    <div class="ms-tc-em">"我会一直带着的。"</div>
+                                    <div class="ms-tc-hesitate">我当时以为只是客套话。</div>
+                                    <div class="ms-tc-line">后来我发现Ta真的每天都带着。漆掉了大半，Ta说这样更好看，像是旧了的老朋友。</div>
+                                    <div class="ms-tc-line">你现在还记不记得那个下午？你还难受吗？</div>
+                                    <div class="ms-tc-dim">算了不问了。反正你也回不了这条消息。</div>
+                                    <div class="ms-tc-sign">
+                                        <div class="ms-tc-sign-from">写于 2026年4月30日 凌晨 03:14<br>那天外面在下雨</div>
+                                        <div class="ms-tc-sign-stamp">已封存</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 5: 角色日记 ===== -->
+    <section class="section">
+        <div class="showcase-row fade-up">
+            <div class="showcase-text">
+                <div class="section-label">Character Diary</div>
+                <h3 class="section-title">角色日记<br>坐下来认真想过的</h3>
+                <p class="section-desc">模拟角色在事件过程中写下的日记——不是碎碎念，是认真坐下来梳理过的感受。有分析、有推理、有对自身行为的审视，与语音备忘录的碎片感形成对比。</p>
+            </div>
+            <div class="showcase-phone-wrap">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="ms-diary ms-dark-scroll" style="position:absolute;inset:0;">
+                            <div class="ms-dark-nav">
+                                <button class="ms-dark-back">← 返回</button>
+                                <span class="ms-dark-label">角色日记</span>
+                            </div>
+                            <div class="ms-diary-header">
+                                <div class="ms-diary-title">林屿的日记本</div>
+                                <div class="ms-diary-sub">L88 - L95 · 那枚钥匙扣 · 2 篇</div>
+                            </div>
+                            <div class="ms-diary-notebook">
+                                <div class="ms-diary-entry">
+                                    <div class="ms-de-header">
+                                        <div class="ms-de-date">四月二十八日</div>
+                                        <div class="ms-de-day">周一 · 阴</div>
+                                        <div class="ms-de-topic">关于Ta送我的那个东西</div>
+                                    </div>
+                                    <div class="ms-de-body">
+                                        <div class="ms-de-para">今天仔细看了一下那个钥匙扣。星星图案确实印歪了，漆也涂得不均匀。夜市货，撑死十块钱。</div>
+                                        <div class="ms-de-em">但我把它挂在书包上的时候，感觉比什么贵重礼物都开心。</div>
+                                        <div class="ms-de-para">你问我为什么？我不知道。可能是因为Ta递给我的时候手指碰了一下，然后很快缩回去的样子。也可能是因为Ta说"随便买的"但耳朵尖红了。</div>
+                                        <div class="ms-de-shaky">我是不是有点太在意这些东西了。</div>
+                                        <div class="ms-de-para">算了，反正也没人看这本日记。</div>
+                                    </div>
+                                    <div class="ms-de-footer"><span class="ms-de-time">23:15</span><span class="ms-de-mood">——</span></div>
+                                </div>
+                                <div class="ms-diary-entry">
+                                    <div class="ms-de-header">
+                                        <div class="ms-de-date">五月二日</div>
+                                        <div class="ms-de-day">周五 · 晴</div>
+                                        <div class="ms-de-topic">今天发生的事，以及我做的决定</div>
+                                    </div>
+                                    <div class="ms-de-body">
+                                        <div class="ms-de-para">钥匙扣上的星星掉了一半的漆。Ta看到了，问我怎么不换个新的。</div>
+                                        <div class="ms-de-para">我说不用，这样更好看。<span class="ms-de-em">Ta愣了一下然后笑了。</span>那个笑容让我觉得，我的回答好像触到了什么。</div>
+                                        <div class="ms-de-scratch">也许我只是在等Ta注意到。</div>
+                                        <div class="ms-de-para">今天做了一个决定：不管这段关系最后走到哪里，我都会把这个钥匙扣留着。不是为了Ta，是为了记得那个在夜市瞎逛的晚上，记得自己为什么会心跳加速。</div>
+                                        <div class="ms-de-faint">有些东西不需要多完美。歪歪扭扭的星星也是星星。</div>
+                                    </div>
+                                    <div class="ms-de-footer"><span class="ms-de-time">00:42</span><span class="ms-de-mood">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 6: 记忆星图 ===== -->
+    <section class="section">
+        <div class="fade-up" style="text-align:center; margin-bottom: 56px;">
+            <div class="section-label">Memory Starmap</div>
+            <h3 class="section-title" style="max-width:600px; margin:0 auto 16px;">记忆星图<br>你们走过的每一步都是星光</h3>
+            <p class="section-desc" style="margin:0 auto;">所有重要时刻化作星空中的星辰，连成属于你们的星座。在浩瀚宇宙里，这些记忆永远闪亮。</p>
+        </div>
+        <div class="fade-up" style="display:flex; justify-content:center;">
+            <div class="phone-frame" style="box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 120px rgba(0,0,0,0.5), 0 0 80px rgba(232,184,96,0.1);">
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div class="sm-page">
+                        <div class="sm-head">
+                            <div class="sm-head-bar">
+                                <div class="sm-head-left">
+                                    <button class="sm-back-btn">←</button>
+                                    <span class="sm-title">记忆星图</span>
+                                </div>
+                                <span class="sm-count">8 个时刻</span>
+                            </div>
+                        </div>
+                        <div class="sm-starmap" id="starmapScreen">
+                            <div class="sm-bg-gradient"></div>
+                            <div class="sm-bg-grid"></div>
+                            <div class="sm-bg-stars" id="starmapBgStars"></div>
+                            <div id="starmapMemoryStars"></div>
+                            <div class="sm-timeline-axis"></div>
+                            <div class="sm-timeline-labels">
+                                <span class="sm-timeline-label">三月</span>
+                                <span class="sm-timeline-label">四月初</span>
+                                <span class="sm-timeline-label">四月中</span>
+                                <span class="sm-timeline-label">四月末</span>
+                            </div>
+                            <div class="sm-bottom-hint">点击星星查看那个时刻</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+        <div>Tavo 记忆系统 v3.2-sweet-memory</div>
+        <div class="author">by 第五季果汁</div>
+    </div>
+
+    <script>
+        // ===== HERO STARS =====
+        (function() {
+            const container = document.getElementById('heroStars');
+            for (let i = 0; i < 80; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                const size = Math.random() * 2 + 0.5;
+                s.style.cssText = `
+                    width:${size}px; height:${size}px;
+                    left:${Math.random()*100}%; top:${Math.random()*100}%;
+                    --dur:${Math.random()*3+2}s;
+                    --o1:${Math.random()*0.3+0.1}; --o2:${Math.random()*0.5+0.4};
+                `;
+                container.appendChild(s);
+            }
+        })();
+
+        // ===== MEMORY CARDS DATA =====
+        const memoryCards = [
+            { range: 'L38 - L42', icon: '🎙', iconClass: 'voice', title: '雨天的约定',
+                time: '四月下旬 · 关系变化',
+                quote: '"下这么大雨你还来？" "因为你说想见我。"', tags: ['关系变化', '互动片段', '关键引语'],
+            label: '查看语音' },
+            { range: 'L67 - L72', icon: '🛋', iconClass: 'counsel', title: '天台上的对话',
+                time: '五月上旬 · 互动片段',
+                quote: '"如果有一天你找不到我了，就抬头看星星。"', tags: ['关键引语', '细节', '承诺'],
+            label: '查看咨询' },
+            { range: 'L88 - L95', icon: '💌', iconClass: 'capsule', title: '那枚钥匙扣', time: '五月中旬 · 信物',
+                quote: '"我会一直带着的。"', tags: ['信物', '互动片段', '用户偏好'], label: '查看胶囊' },
+            { range: 'L15 - L20', icon: '📔', iconClass: 'diary', title: '初次相遇', time: '三月末 · 关系起点',
+                quote: '"你好，我叫林屿。以后……请多指教。"', tags: ['关键引语', '关系变化'], label: '查看日记' },
+        ];
+
+        (function() {
+            const container = document.getElementById('memCardsContainer');
+            memoryCards.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'ms-ev-card';
+                div.innerHTML = `
+                    <div class="ms-ev-top">
+                        <div>
+                            <div class="ms-ev-range">${c.range}</div>
+                            <div class="ms-ev-title">${c.title}</div>
+                            <div class="ms-ev-time">${c.time}</div>
+                        </div>
+                        <div class="ms-ev-form-icon ${c.iconClass}">${c.icon}</div>
+                    </div>
+                    <div class="ms-ev-quote">
+                        <div class="ms-ev-quote-text">"${c.quote}"</div>
+                    </div>
+                    <div class="ms-ev-tags">
+                        ${c.tags.map(t => `<span class="ms-ev-tag">${t}</span>`).join('')}
+                    </div>
+                    <div class="ms-ev-action">
+                        <button class="ms-ev-enter">${c.label} <span>→</span></button>
+                        <button class="ms-ev-mini">重抽</button>
+                        <button class="ms-ev-mini">编辑</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        })();
+
+        // ===== CAPSULE INTERACTION =====
+        (function() {
+            const envelope = document.getElementById('capsuleEnvelope');
+            const body = document.getElementById('capsuleBody');
+            let opened = false;
+            envelope.addEventListener('click', () => {
+                if (opened) return;
+                opened = true;
+                envelope.style.opacity = '0';
+                envelope.style.transform = 'scale(0.95)';
+                envelope.style.transition = 'opacity 0.5s, transform 0.5s';
+                envelope.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    envelope.style.display = 'none';
+                    body.style.display = 'block';
+                    body.style.opacity = '0';
+                    body.style.transform = 'translateY(16px)';
+                    body.style.transition = 'opacity 0.7s 0.2s, transform 0.7s 0.2s';
+                    requestAnimationFrame(() => {
+                        body.style.opacity = '1';
+                        body.style.transform = 'translateY(0)';
+                    });
+                }, 400);
+            });
+        })();
+
+        // ===== STARMAP =====
+        (function() {
+            const bgStarsEl = document.getElementById('starmapBgStars');
+            // Background tiny stars
+            for (let i = 0; i < 120; i++) {
+                const s = document.createElement('div');
+                s.className = 'sm-bg-star';
+                const sz = Math.random() < 0.1 ? 3 : (Math.random() < 0.3 ? 2 : 1);
+                s.style.cssText = `
+                    width:${sz}px; height:${sz}px;
+                    left:${Math.random()*100}%; top:${Math.random()*100}%;
+                    --o1:${(0.1+Math.random()*0.3).toFixed(2)};
+                    --o2:${(0.5+Math.random()*0.5).toFixed(2)};
+                    --dur:${(2+Math.random()*4).toFixed(1)}s;
+                    animation-delay:${(Math.random()*5).toFixed(1)}s;
+                `;
+                bgStarsEl.appendChild(s);
+            }
+
+            // Memory stars
+            const memStarsData = [
+                { x: 18, y: 22, sz: 's3', label: '初次相遇', imp: 3 },
+                { x: 28, y: 38, sz: 's5', label: '雨天的约定', imp: 5 },
+                { x: 48, y: 18, sz: 's4', label: '天台对话', imp: 4 },
+                { x: 55, y: 48, sz: 's5', label: '那枚钥匙扣', imp: 5 },
+                { x: 38, y: 58, sz: 's3', label: '深夜电话', imp: 3 },
+                { x: 68, y: 28, sz: 's4', label: '吵架和好', imp: 4 },
+                { x: 78, y: 50, sz: 's3', label: '生日惊喜', imp: 3 },
+                { x: 72, y: 68, sz: 's5', label: '未来的约定', imp: 5 },
+            ];
+
+            const container = document.getElementById('starmapMemoryStars');
+            const starmapEl = document.getElementById('starmapScreen');
+            const starmapRect = starmapEl.getBoundingClientRect();
+
+            // Draw constellation lines
+            const connections = [
+                [0, 1],
+                [1, 2],
+                [2, 3],
+                [3, 4],
+                [4, 5],
+                [5, 6],
+                [6, 7]
+            ];
+            connections.forEach(([a, b]) => {
+                const sa = memStarsData[a],
+                    sb = memStarsData[b];
+                const dx = sb.x - sa.x,
+                    dy = sb.y - sa.y;
+                const len = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                const line = document.createElement('div');
+                line.className = 'sm-constellation-line';
+                line.style.cssText = `
+                    left:${sa.x}%; top:${sa.y}%;
+                    width:${len}%;
+                    transform:rotate(${angle}deg);
+                `;
+                container.appendChild(line);
+            });
+
+            // Draw memory stars
+            memStarsData.forEach(ms => {
+                const star = document.createElement('div');
+                star.className = `sm-star ${ms.sz}`;
+                star.style.cssText = `
+                    left:${ms.x}%; top:${ms.y}%;
+                    transform:translate(-50%,-50%);
+                `;
+                star.innerHTML = `
+                    <div class="sm-star-label">${ms.label}</div>
+                    <div class="sm-star-core"></div>
+                `;
+                container.appendChild(star);
+            });
+        })();
+
+        // ===== SCROLL REVEAL =====
+        (function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) e.target.classList.add('visible');
+                });
+            }, { threshold: 0.15 });
+            document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        })();
+
+        // ===== FLOATING PARTICLES =====
+        (function() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 18; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 4 + 2;
+                p.style.cssText = `
+                    width:${size}px; height:${size}px;
+                    left:${Math.random()*100}%;
+                    bottom:-20px;
+                    background: rgba(232,184,96,${Math.random()*0.3+0.1});
+                    animation-duration:${Math.random()*15+10}s;
+                    animation-delay:${Math.random()*10}s;
+                `;
+                container.appendChild(p);
+            }
+        })();
+    </script>
+
+</body>
+</html>
